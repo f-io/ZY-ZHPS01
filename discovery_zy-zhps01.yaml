@@ -49,13 +49,12 @@ variables:
   connections: "{{ device_attr(device_id, 'connections') }}"
   name: "{{ device_attr(device_id, 'name') if device_attr(device_id, 'name_by_user') == None else device_attr(device_id, 'name_by_user') }}"
   macaddr: >-
-    {%- for i in device_attr(device_id, 'connections') -%}
-      {{ i[1].replace(":", "") }}
-    {% endfor %}
+    {{ device_attr(device_id, 'connections') | selectattr(0, 'eq', 'mac') | map(attribute=1) | first | replace(':', '') }}
+  
   payload_presence: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Presence",
+        "name":"Presence",
         "device_class":"occupancy",
         "state_topic":"' ~ topic ~ '/presence",
         "payload_on":"1",
@@ -67,6 +66,7 @@ variables:
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
     }}
+
   payload_holdtime: >-
     {{ 
       '{
@@ -80,7 +80,7 @@ variables:
         "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
         "command_template":"104,{{ value }}",
-        "mode":"slider",
+        "mode":"box",
         "entity_category":"config",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
@@ -88,19 +88,21 @@ variables:
         "uniq_id":"' ~ macaddr ~ '_holdtime",
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
-    }}  
+    }}
+
   payload_sensitivity: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Sensitivity",
+        "name":"Sensitivity",
         "icon":"hass:radar",
         "min":"0",
         "max":"10",
         "step":"1",
         "state_topic":"' ~ topic ~ '/sensitivity",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
         "command_template":"105,{{ value }}",
-        "mode":"slider",
+        "mode":"box",
         "entity_category":"config",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
@@ -109,18 +111,20 @@ variables:
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
     }}
+
   payload_microsensitivity: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Micro Sensitivity",
+        "name":"Micro Sensitivity",
         "icon":"hass:radar",
         "min":"0",
         "max":"10",
         "step":"1",
         "state_topic":"' ~ topic ~ '/microsensitivity",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
         "command_template":"107,{{ value }}",
-        "mode":"slider",
+        "mode":"box",
         "entity_category":"config",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
@@ -128,43 +132,45 @@ variables:
         "uniq_id":"' ~ macaddr ~ '_microsensitivity",
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
-    }}  
+    }}
+
   payload_maxrange: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Maximum Range",
+        "name":"Maximum Range",
         "icon":"hass:magnify-plus-cursor",
         "min":"0",
-        "max":"6",
-        "step":"0.10",
-        "unit_of_measurement":"m",
+        "max":"600",
+        "step":"1",
+        "unit_of_measurement":"cm",
         "state_topic":"' ~ topic ~ '/maxrange",
-        "value_template":"{{ value | float * 0.01 }}",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
-        "command_template":"109,{{ value | float * 100 }}",
+        "command_template":"109,{{ value }}",
+        "mode":"box",
         "entity_category":"config",
-        "mode":"slider",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
         "pl_not_avail":"Offline",
         "uniq_id":"' ~ macaddr ~ '_maxrange",
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
-    }}    
+    }}
+
   payload_minrange: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Minimum Range",
-        "icon":"hass:magnify-minus-cursor",
+        "name":"Minimum Range",
+        "icon":"hass:magnify-plus-cursor",
         "min":"0",
-        "max":"6",
-        "step":"0.10",
-        "unit_of_measurement":"m",
+        "max":"600",
+        "step":"1",
+        "unit_of_measurement":"cm",
         "state_topic":"' ~ topic ~ '/minrange",
-        "value_template":"{{ value | float * 0.01 }}",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
-        "command_template":"110,{{ value | float * 100 }}",
-        "mode":"slider",
+        "command_template":"110,{{ value }}",
+        "mode":"box",
         "entity_category":"config",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
@@ -173,42 +179,44 @@ variables:
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
     }}
+
   payload_micromaxrange: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Micro Maximum Range",
+        "name":"Micro Maximum Range",
         "icon":"hass:magnify-plus-cursor",
         "min":"0",
-        "max":"6",
-        "step":"0.10",
-        "unit_of_measurement":"m",
+        "max":"600",
+        "step":"1",
+        "unit_of_measurement":"cm",
         "state_topic":"' ~ topic ~ '/micromaxrange",
-        "value_template":"{{ value | float * 0.01 }}",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
-        "command_template":"111,{{ value | float * 100 }}",
+        "command_template":"111,{{ value }}",
+        "mode":"box",
         "entity_category":"config",
-        "mode":"slider",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
         "pl_not_avail":"Offline",
         "uniq_id":"' ~ macaddr ~ '_micromaxrange",
         "dev":{"cns":[["mac","' ~ macaddr ~ '"]]}
       }' 
-    }}    
+    }}
+
   payload_microminrange: >-
     {{ 
       '{
-        "name":"' ~ name ~ ' Micro Minimum Range",
+        "name":"Micro Minimum Range",
         "icon":"hass:magnify-minus-cursor",
         "min":"0",
-        "max":"6",
-        "step":"0.10",
-        "unit_of_measurement":"m",
+        "max":"600",
+        "step":"1",
+        "unit_of_measurement":"cm",
         "state_topic":"' ~ topic ~ '/microminrange",
-        "value_template":"{{ value | float * 0.01 }}",
+        "value_template":"{{ value }}",
         "command_topic":"cmnd/' ~ topic ~ '/tuyasend2",
-        "command_template":"112,{{ value | float * 100 }}",
-        "mode":"slider",
+        "command_template":"112,{{ value }}",
+        "mode":"box",
         "entity_category":"config",
         "avty_t":"tele/' ~ topic ~ '/LWT",
         "pl_avail":"Online",
@@ -218,6 +226,7 @@ variables:
       }' 
     }}
 
+
 trigger_variables:
   topic: !input topic
 
@@ -225,7 +234,7 @@ trigger:
   - platform: homeassistant
     event: start
   - platform: mqtt
-    topic: '{{ "tele/" ~ topic ~ "/LWT" }}'
+    topic: "tele/{{ topic }}/LWT"
     payload: "Online"
 
 action:
@@ -236,24 +245,19 @@ action:
       payload: "{{ payload_presence }}"
   - service: mqtt.publish
     data:
+      topic: "homeassistant/number/{{ macaddr }}/holdtime/config"
+      retain: true
+      payload: "{{ payload_holdtime }}"
+  - service: mqtt.publish
+    data:
       topic: "homeassistant/number/{{ macaddr }}/sensitivity/config"
       retain: true
       payload: "{{ payload_sensitivity }}"
   - service: mqtt.publish
     data:
-      topic: "homeassistant/number/{{ macaddr }}/fadingtime/config"
-      retain: true
-      payload: "{{ payload_holdtime }}"    
-  - service: mqtt.publish
-    data:
       topic: "homeassistant/number/{{ macaddr }}/microsensitivity/config"
       retain: true
-      payload: "{{ payload_microsensitivity }}"      
-  - service: mqtt.publish
-    data:
-      topic: "homeassistant/number/{{ macaddr }}/minrange/config"
-      retain: true
-      payload: "{{ payload_minrange }}"
+      payload: "{{ payload_microsensitivity }}"
   - service: mqtt.publish
     data:
       topic: "homeassistant/number/{{ macaddr }}/maxrange/config"
@@ -261,14 +265,19 @@ action:
       payload: "{{ payload_maxrange }}"
   - service: mqtt.publish
     data:
-      topic: "homeassistant/number/{{ macaddr }}/microminrange/config"
+      topic: "homeassistant/number/{{ macaddr }}/minrange/config"
       retain: true
-      payload: "{{ payload_microminrange }}"
+      payload: "{{ payload_minrange }}"
   - service: mqtt.publish
     data:
       topic: "homeassistant/number/{{ macaddr }}/micromaxrange/config"
       retain: true
-      payload: "{{ payload_micromaxrange }}"    
+      payload: "{{ payload_micromaxrange }}"
+  - service: mqtt.publish
+    data:
+      topic: "homeassistant/number/{{ macaddr }}/microminrange/config"
+      retain: true
+      payload: "{{ payload_microminrange }}"
   - delay:
       hours: 0
       minutes: 0
