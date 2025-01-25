@@ -19,13 +19,23 @@ CB3S + Airtouch [AT5820](https://en.airtouching.com/product/29.html), module loo
   113 | unkown
 ```
 
-## Images
-DUT
+## mmWave IC & HA Integration
+
+<table>
+  <tbody>
+    <tr>
+      <td><img src="/images/pic_04.jpeg" alt="wago 879" style="width:600px;height:auto;"></td>
+      <td><img src="/images/HA.png" alt="wago 879" style="width:600px;height:auto;"></td>
+    </tr>
+  </tbody>
+</table>
+
+## DUT
+
 ![pic1](images/pic_01.jpeg)
 <br>
 ![pic2](images/pic_02.jpeg)
 <br>
 ![pic3](images/pic_03.jpeg)
 <br>
-![pic4](images/pic_04.jpeg)
-<br>
+
